@@ -1,0 +1,12 @@
+title: jared.im / Blog
+email: contact@jared.im
+description: I like to post interesting things here for my own personal satisfaction. Don't judge me.
+baseurl: /blog
+url: https://jared.im
+twitter_username: MrCrunkle
+github_username: Crunkle
+
+markdown: kramdown
+
+permalink: pretty
+timezone: Europe/London
