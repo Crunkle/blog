@@ -3,7 +3,7 @@ layout: post
 title: Installing OVH servers visually via VNC
 ---
 
-There are many dedicated hosting providers which lack features whilst installing operating systems to your servers. I recently tried using distribution kernels with the OVH installation system and ran into a dozen problems. This is a quick guide on how I installed my dedicated servers remotely using a virtual machine and VNC.
+A large number of unmanaged server providers lack features when installing operating systems. I recently tried using distribution kernels with the OVH installation system and ran into a dozen problems relating to hardware compatibility. This is a quick guide on how I installed my dedicated servers remotely using a virtual machine and VNC.
 
 To start with, as this guide is tailored towards OVH servers, you need to turn off all server monitoring to prevent the ping timeout system from creating tickets when your server is in rescue mode.
 
