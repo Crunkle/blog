@@ -12,19 +12,20 @@ To start with, as this guide is tailored towards OVH servers, you need to turn o
 Boot your server into any rescue mode and prepare to reinstall your server; now is the time to backup your data. The way we are going to install the server is using a virtual machine; attaching your drives, forwarding traffic and enabling VNC for remote installation. We will be using QEMU to emulate the installation as it will allow us to boot the installation ISO from rescue mode. You can compile this yourself if you are unable to find the precompiled binaries on your rescue system.
 
 ```shell
-qemu-system-x86_64 --version
+[root@rescue ~]$ qemu-system-x86_64 -version
+QEMU emulator version 2.0.0, Copyright (c) 2003-2008 Fabrice Bellard
 ```
 
 With QEMU ready to go, you will need to download your ISO to the server. As some rescue systems are booted via network drives, you will need to be patient as the download may take longer than expected.
 
 ```shell
-wget http://buildlogs.centos.org/rolling/7/isos/x86_64/CentOS-7-x86_64-Minimal.iso
+[root@rescue ~]$ wget http://buildlogs.centos.org/rolling/7/isos/x86_64/CentOS-7-x86_64-Minimal.iso
 ```
 
 It is now time to start your virtual machine. You may need to tweak the following flags to suit your needs, but the flags should work fine if you have two drives on your machine. This command starts a new virtual system, using the ISO as a virtual CD-ROM, and forwards all traffic from port 80 of the host machine (the rescue system) to the virtual machine. You can see that VNC has been enabled on port 5901 (read the man page to understand why it is port 5901 and not just 1). The primary thing to note here is that we have attached two drives (hda and hdb) to the machine and will be booting from the CD-ROM. You can redact the second disk if you are not installing a RAID system.
 
 ```shell
-qemu-system-x86_64 -net nic -net user,hostfwd=tcp::80-:80 -m 1024M -enable-kvm -hda /dev/sda -hdb /dev/sdb -vnc :1 -cdrom ~/CentOS-7-x86_64-Minimal.iso -boot d
+[root@rescue ~]$ qemu-system-x86_64 -net nic -net user,hostfwd=tcp::80-:80 -m 1024M -enable-kvm -hda /dev/sda -hdb /dev/sdb -vnc :1 -cdrom ~/CentOS-7-x86_64-Minimal.iso -boot d
 ```
 
 If all goes well, you should now see that QEMU is running and you will be able to connect via VNC. If you are unable to connect to your server or your client crashes, you may want to try another client. I used TightVNC as it was compatible with the version of QEMU on my system.
@@ -38,7 +39,7 @@ You should now be able to install your system using your keyboard and mouse! The
 Configure the disk partitioning, boot drive and security settings before installing the server. Do not worry about the network configuration at this stage as it will be replaced later. Once installed, you will need to restart the server and terminate the QEMU process from earlier. It is now time to restart QEMU using different flags to boot from the hard drive instead. If you try to boot up your installed system now, you will be unable to connect as the network scripts will be pointing towards QEMU. You can boot from the hard drive by changing the boot flag and enabling SSH access by forwarding traffic from the rescue mode server (port 222) to the SSH server run inside of QEMU.
 
 ```shell
-qemu-system-x86_64 -net nic -net user,hostfwd=tcp::222-:22 -m 1024M -enable-kvm -hda /dev/sda -hdb /dev/sdb -vnc :1 -boot c
+[root@rescue ~]$ qemu-system-x86_64 -net nic -net user,hostfwd=tcp::222-:22 -m 1024M -enable-kvm -hda /dev/sda -hdb /dev/sdb -vnc :1 -boot c
 ```
 
 You should now be able to connect to SSH on your installed server using the port 222. If you do not change the port, you will be connecting to the rescue mode server instead of the installed server. The next thing to do is setup the network scripts so that you can connect to the server remotely without QEMU or rescue mode. Be sure to delete the previous script created on installation as it will not work outside of the emulator.
