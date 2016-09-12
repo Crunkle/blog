@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Leave the old iptables for firewalld
+title: Leaving your iptables chains for firewalld
 ---
 
 I still encounter people using iptables as their primary interface for their firewall. This isn't necessarily a bad thing, but you can make your life easier (and sometimes more secure) by using a firewall daemon. I am going to be focusing on a quick runthrough of firewalld; a user-friendly way to configure iptables.
