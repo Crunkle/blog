@@ -11,7 +11,9 @@ To start with, as this guide is tailored towards OVH servers, you need to turn o
 
 Boot your server into any rescue mode and prepare to reinstall your server; now is the time to backup your data. The way we are going to install the server is through a virtual machine; attaching your drives, forwarding traffic and enabling VNC for remote installation. We will be using QEMU to emulate the installation as it will allow us to boot the installation ISO from rescue mode. You can compile this yourself if you are unable to find the precompiled binaries on your rescue system.
 
+```shell
 qemu-system-x86_64 --version
+```
 
 With QEMU ready to go, you will need to download your ISO to the server. As some rescue systems are booted via network drives, you will need to be patient as the download may take longer than expected.
 
