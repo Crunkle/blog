@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Optimizing CraftBukkit for minigame servers
+title: Optimizing CraftBukkit for large servers
 ---
 
 It is always more beneficial to optimize a server before paying to upgrade hardware. A common misconception is that more RAM in a server equals better performance. This is not the case whatsoever and is simply a marketing misconception among shared hosts. It is to be noted that some changes I am going to implement are focused towards larger networks rather than vanilla gameplay thus removing unnecessary gameplay features.
