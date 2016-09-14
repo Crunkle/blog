@@ -14,7 +14,7 @@ I created a server benchmarking tool which gradually ramps up processing using l
 [16:17:26] [Server thread/INFO]: Benchmark Score: 1770
 ```
 
-The averaged benchmark score for this server is 1823. This score will vary based on hardware but, as we are using the same hardware to benchmark our end result, it shouldn't matter in our case. In order to find the bottlenecks, we need to attach a profiler to the server and see what is causing the performance hit. I will be using JProfiler to analyze the JVM as it has less overhead for CPU monitoring than some competitors.
+The averaged benchmark score for this server is 1823. This score will vary based on hardware but, as we are using the same hardware to benchmark our end result, it shouldn't matter in our case. In order to find the bottlenecks, we need to attach a profiler to the server and see what is causing the performance hit. I will be using JProfiler to analyze the JVM as it has less overhead for CPU monitoring than other competitors.
 
 ![example](https://cdn.jared.im/static/jprofiler_2016-09-13_19-53-10.png)
 
@@ -48,7 +48,7 @@ public class ChunkProviderServer implements IChunkProvider {
 ...
 ```
 
-The chunk coordinates will now only be able to span from -1024 to 1024 allowing us to move just over 16,000 blocks in any direction from the origin. This should be more than enough to hold a medium to large world. We could also create the array by looking at how many chunks the world’s region files use, but this is slightly more complicated. In order to fully implement this array, we need to rewrite the access methods to use our improved array. We also need to remember to account for negative coordinates to prevent them from going out of the array’s bounds.
+As we are only using 22 bits of data for each chunk coordinate, chunks will only be able to span from -1024 to 1024 allowing us to move just over 16,000 blocks in any direction from the origin. This should be more than enough to hold a medium to large world. We could also create the object by looking at how many chunks the world’s region files use (which is slightly more complicated). In order to fully implement this array, we need to rewrite the access methods to use our improved array. We also need to remember to account for negative coordinates to prevent them from going out of the array’s bounds. The indexing we have implemented is a simple bitshift to store both parts of the chunk's location in a single integer.
 
 ```java
 public class IndexedChunkMap {
@@ -91,7 +91,7 @@ public class IndexedChunkMap {
 }
 ```
 
-Now that we have our custom in-memory chunk storage done, we can look at world saving. Unless you want to rewrite a custom storage file format (which has been done before), there isn’t much need to be saving a world which is static. If no blocks are being changed and no lighting needs updating, what’s the point of saving identical chunks? On top of this, for smaller worlds, there isn’t always a need to unload the world. It will be much quicker to just keep the world fully loaded at all times for immediate access. You can dig deeper into this paradigm and say that you also don’t need block physics, lighting recalculations (in the case of minigame maps), and a large majority of the vanilla features but we won’t step too far for the sake of abstraction.
+Now that we have our custom in-memory chunk storage done, we can look at world saving. Unless you want to rewrite a custom storage file format (which has been done before), there isn’t much need to be saving a world which is static. If no blocks are being changed and no lighting needs updating, what’s the point of saving identical chunks? On top of this, for smaller worlds, there isn’t always a need to unload the world. It would be much faster to just keep the world fully loaded at all times for immediate in-memory access, but be careful that you haven't got dozens of entities loaded alongside the chunks. You can dig deeper into this paradigm and say that you also don’t need block physics, lighting recalculations (in the case of static worlds), and a large majority of the vanilla features - but we won’t step too far for the sake of abstraction.
 
 ```java
 public class WorldServer extends World implements IAsyncTaskHandler {
@@ -120,4 +120,4 @@ You always can go further and disable the world NBT data entirely if you are cer
 [20:44:31] [Server thread/INFO]: Benchmark Score: 10977
 ```
 
-Now we are at a new, and heavily improved, average score of 11278. To put this in to perspective, this is over a 6x increase in benchmark performance and I was also able to load around 15,000 active entities on my local machine before dropping ticks. Keep in mind that you can always optimize something further, but you don’t want to destroy the abstraction by making everything completely static. I haven’t included all changes made as it would take far too long to describe each in detail (plus most of the changes were rather complicated and boring). Despite being a notorious RAM-eating monster, if you're running proprietary gamemodes you really don't need to be spending valuable CPU time on unnecessary gameplay features.
+Now we are at a new, and heavily improved, average score of 11278. To put this in to perspective, this is over a 6x increase in benchmark performance and I was now able to load around 15,000 active entities on my local machine before dropping ticks. Keep in mind that you can always optimize something further, but you don’t want to destroy the abstraction by making everything completely static. Most of the changes were rather complicated and boring so I won't go in to depth any further and leave you with this: despite being a notorious RAM-eating monster, if you're running proprietary gamemodes, you really don't need to be spending valuable CPU time on unnecessary gameplay features. Fix the code before you fix the hardware.
